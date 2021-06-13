@@ -22,7 +22,9 @@ package com.sk89q.worldedit.bukkit;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.blocks.LazyBlock;
 import com.sk89q.worldedit.bukkit.adapter.BukkitImplAdapter;
 import com.sk89q.worldedit.entity.BaseEntity;
+import com.sk89q.worldedit.forge.ForgeWorld;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.TreeGenerator;
 import com.sk89q.worldedit.world.biome.BaseBiome;
@@ -68,7 +71,9 @@ public class BukkitWorld extends LocalWorld {
     private static final Logger logger = WorldEdit.logger;
     
     private int worldMinHeight = 0;
-    private boolean cachedWorldMinHeight = false;
+    private boolean cachedWorldMinHeight = false; //TODO Rename
+    
+    private ForgeWorld forgeWorld;
 
     private static final Map<Integer, Effect> effects = new HashMap<Integer, Effect>();
     static {
@@ -162,6 +167,10 @@ public class BukkitWorld extends LocalWorld {
 
     @Override
     public boolean regenerate(Region region, EditSession editSession) {
+        try {
+            return this.asForgeWorld().regenerate(region, editSession);
+        } catch (Throwable silenced) {}
+        
         BaseBlock[] history = new BaseBlock[16 * 16 * (getMaxY() + 1)];
 
         for (Vector2D chunk : region.getChunks()) {
@@ -493,4 +502,22 @@ public class BukkitWorld extends LocalWorld {
     public boolean setBlock(Vector pt, com.sk89q.worldedit.foundation.Block block, boolean notifyAdjacent) throws WorldEditException {
         return setBlock(pt, (BaseBlock) block, notifyAdjacent);
     }
+    
+    private Object getNmsWorld() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+        World bukkitWorld = getWorld();
+        Field worldField = bukkitWorld.getClass().getDeclaredField("world");
+        worldField.setAccessible(true);
+        return worldField.get(bukkitWorld);
+    }
+    
+    private ForgeWorld asForgeWorld() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException, SecurityException, NoSuchMethodException {
+        if(this.forgeWorld == null) {
+            Class<?> nmsClass = Class.forName("net.minecraft.world.World");
+            Constructor<ForgeWorld> constructor = ForgeWorld.class.getDeclaredConstructor(nmsClass);
+            constructor.setAccessible(true);
+            this.forgeWorld = constructor.newInstance(this.getNmsWorld());
+        }
+        return this.forgeWorld;
+    }
+    
 }

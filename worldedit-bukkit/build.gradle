@@ -7,6 +7,7 @@ repositories {
 
 dependencies {
     compile project(':worldedit-core')
+    compile project(':worldedit-forge')
     compile 'com.sk89q:dummypermscompat:1.8'
     compile 'org.bukkit:bukkit:1.9.4-R0.1-SNAPSHOT' // zzz
     testCompile 'org.mockito:mockito-core:1.9.0-rc1'
@@ -25,7 +26,7 @@ processResources {
 
 jar {
     manifest {
-        attributes("Class-Path": "truezip.jar WorldEdit/truezip.jar js.jar WorldEdit/js.jar",
+        attributes("Class-Path": "truezip.jar WorldEdit/truezip.jar js.jar WorldEdit/js.jar WorldEdit/worldedit-forge.jar",
                    "WorldEdit-Version": version)
     }
 }
