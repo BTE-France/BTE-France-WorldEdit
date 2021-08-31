@@ -1,3 +1,16 @@
+# World Edit - BTE France edition
+This is a cutomized 1.12.2 world edit for the BTE France server. It is not intended for the general public.
+Changes include:
+- CubicChunks compatibility for the Forge version
+- CubicChunks compatibility for the Bukkit version, with callbacks to the Forge version
+
+Further changes will be implemented
+
+## Setup
+- Get the jars (boh the Forge and Bukkit builds). You can build them for source or get them in the BTE Developement Hub Discord server.
+- Add the Bukkit jar to your `plugins` folder
+- Add the Forge jar to your `plugins/WorldEdit`
+
 ![WorldEdit](http://static.sk89q.com/readme/worldedit.png)
 =========
 
