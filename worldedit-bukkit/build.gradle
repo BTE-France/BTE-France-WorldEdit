@@ -1,8 +1,10 @@
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'maven'
 
 repositories {
     maven { url "https://hub.spigotmc.org/nexus/content/groups/public" }
+    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
