@@ -143,6 +143,9 @@ public class SchematicCommands {
 
         File dir = worldEdit.getWorkingDirectoryFile(config.saveDir);
         File f = worldEdit.getSafeSaveFile(player, dir, filename, "schematic", "schematic");
+        for (int suffix = 1; f.exists(); suffix++) {
+            f = worldEdit.getSafeSaveFile(player, dir, filename + "_" + suffix, "schematic", "schematic");
+        }
 
         ClipboardFormat format = ClipboardFormat.findByAlias(formatName);
         if (format == null) {
@@ -180,7 +183,7 @@ public class SchematicCommands {
             ClipboardWriter writer = closer.register(format.getWriter(bos));
             writer.write(target, holder.getWorldData());
             log.info(player.getName() + " saved " + f.getCanonicalPath());
-            player.print(filename + " saved.");
+            player.print(f.getName() + " saved.");
         } catch (IOException e) {
             player.printError("Schematic could not written: " + e.getMessage());
             log.log(Level.WARNING, "Failed to write a saved clipboard", e);
