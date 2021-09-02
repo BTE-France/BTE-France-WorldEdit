@@ -29,6 +29,7 @@ import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.Player;
+import com.sk89q.worldedit.event.platform.SchematicSavedEvent;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -184,6 +185,7 @@ public class SchematicCommands {
             writer.write(target, holder.getWorldData());
             log.info(player.getName() + " saved " + f.getCanonicalPath());
             player.print(f.getName() + " saved.");
+            worldEdit.getEventBus().post(new SchematicSavedEvent(player, f, session));
         } catch (IOException e) {
             player.printError("Schematic could not written: " + e.getMessage());
             log.log(Level.WARNING, "Failed to write a saved clipboard", e);
