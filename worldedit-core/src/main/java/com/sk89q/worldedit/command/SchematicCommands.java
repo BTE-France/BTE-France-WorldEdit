@@ -183,18 +183,19 @@ public class SchematicCommands {
             BufferedOutputStream bos = closer.register(new BufferedOutputStream(fos));
             ClipboardWriter writer = closer.register(format.getWriter(bos));
             writer.write(target, holder.getWorldData());
-            log.info(player.getName() + " saved " + f.getCanonicalPath());
-            player.print(f.getName() + " saved.");
-            worldEdit.getEventBus().post(new SchematicSavedEvent(player, f, session));
         } catch (IOException e) {
             player.printError("Schematic could not written: " + e.getMessage());
             log.log(Level.WARNING, "Failed to write a saved clipboard", e);
         } finally {
             try {
                 closer.close();
+                log.info(player.getName() + " saved " + f.getCanonicalPath());
             } catch (IOException ignored) {
             }
+            player.print(f.getName() + " saved.");
+            worldEdit.getEventBus().post(new SchematicSavedEvent(player, f, session));
         }
+
     }
 
     @Command(
